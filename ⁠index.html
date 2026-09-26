@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>OLUMUREWA Rouge Fund</title>
+  <style>
+    :root {
+      --bg: #090e17;
+      --card: #121927;
+      --card-sub: #172235;
+      --border: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --blue: #2563eb;
+      --green: #10b981;
+      --red: #f43f5e;
+      --cyan: #06b6d4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .brand { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .badge-live { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid var(--green); font-size: 0.62rem; padding: 2px 6px; border-radius: 999px; font-weight: 800; }
+    .top-actions { display: flex; gap: 6px; margin-bottom: 14px; }
+    .btn-pill { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; }
+
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 14px; }
+    .panel-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+    .panel-title { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .panel-sub { font-size: 0.68rem; color: var(--cyan); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+    label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.5px; }
+    .form-group { margin-bottom: 10px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+
+    input, select, textarea {
+      width: 100%; background: #070c14; border: 1px solid var(--border); border-radius: 6px;
+      color: #fff; padding: 10px; font-size: 0.88rem; outline: none; appearance: auto; -webkit-appearance: menulist;
+    }
+    input, textarea { appearance: none; -webkit-appearance: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); }
+
+    .toggle-row { display: flex; gap: 6px; }
+    .toggle-btn {
+      flex: 1; padding: 10px 8px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--card-sub); color: var(--muted); font-size: 0.8rem; font-weight: 700; text-align: center; cursor: pointer;
+      user-select: none; -webkit-user-select: none;
+    }
+    .toggle-btn.active-long { background: rgba(16, 185, 129, 0.25) !important; color: var(--green) !important; border-color: var(--green) !important; }
+    .toggle-btn.active-short { background: rgba(244, 63, 94, 0.25) !important; color: var(--red) !important; border-color: var(--red) !important; }
+    .toggle-btn.active-yes { background: rgba(16, 185, 129, 0.25) !important; color: var(--green) !important; border-color: var(--green) !important; }
+    .toggle-btn.active-no { background: rgba(244, 63, 94, 0.25) !important; color: var(--red) !important; border-color: var(--red) !important; }
+
+    .action-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .calc-meta { font-size: 0.72rem; color: var(--muted); }
+    .calc-meta b { color: #fff; }
+    .btn-submit { background: var(--blue); color: #fff; border: none; border-radius: 6px; padding: 10px 18px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+    .btn-submit.btn-miss { background: #3b4252; color: #d8dee9; }
+
+    /* Open Positions */
+    .open-card { background: #0c1626; border: 1px solid #1e3a8a; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .open-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .open-btns { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
+    .btn-pos { padding: 8px 4px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; border: none; cursor: pointer; text-align: center; }
+    .btn-pos-stop { background: rgba(244, 63, 94, 0.2); color: var(--red); border: 1px solid var(--red); }
+    .btn-pos-target { background: rgba(16, 185, 129, 0.2); color: var(--green); border: 1px solid var(--green); }
+    .btn-pos-exit { background: #1e293b; color: #fff; border: 1px solid var(--border); }
+    .btn-pos-close { background: #334155; color: #fff; }
+
+    /* Metric Grid */
+    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .metric-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .metric-val { font-size: 1.35rem; font-weight: 800; margin-top: 4px; }
+    .metric-sub { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+
+    /* Edge Filter Bar */
+    .filter-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; -webkit-overflow-scrolling: touch; }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    .pill-filter {
+      padding: 6px 12px; border-radius: 999px; background: var(--card-sub); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.72rem; font-weight: 700; white-space: nowrap; cursor: pointer;
+    }
+    .pill-filter.active { background: #1e3a8a; border-color: var(--blue); color: #fff; }
+
+    /* R Analytics Row */
+    .edge-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 0.78rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .edge-name { width: 35%; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .edge-bar-wrap { width: 40%; height: 8px; background: #070c14; border-radius: 4px; overflow: hidden; display: flex; align-items: center; position: relative; }
+    .edge-bar { height: 100%; border-radius: 4px; }
+    .edge-bar.pos { background: var(--cyan); }
+    .edge-bar.neg { background: var(--red); }
+    .edge-val { width: 25%; text-align: right; font-weight: 700; }
+
+    /* Recorded List */
+    .trade-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 0.78rem; cursor: pointer;
+    }
+    .trade-row:last-child { border-bottom: none; }
+    .dir-badge { font-size: 0.65rem; font-weight: 800; padding: 2px 4px; border-radius: 3px; }
+    .dir-long { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+    .dir-short { background: rgba(244, 63, 94, 0.15); color: var(--red); }
+
+    /* Modal Inspection (Permanently Read-Only) */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none;
+      align-items: center; justify-content: center; padding: 16px; z-index: 999;
+    }
+    .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; width: 100%; max-width: 440px; padding: 16px; }
+    .sheet-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
+    .sheet-line span:first-child { color: var(--muted); }
+    .sheet-line span:last-child { font-weight: 700; color: #fff; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="brand">OLUMUREWA Rouge Fund <span class="badge-live">LIVE</span></div>
+  </div>
+
+  <div class="top-actions">
+    <button class="btn-pill" id="btnExportJson">Export Backup (.json)</button>
+    <button class="btn-pill" id="btnImportJson">Import Backup</button>
+    <button class="btn-pill" id="btnExportCsv">Export CSV</button>
+    <input type="file" id="fileIn" accept=".json" style="display:none;">
+  </div>
+
+  <!-- Trade Form -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Open a trade</div>
+      <div class="panel-sub" id="hdrTime">LIVE • --</div>
+    </div>
+
+    <div class="grid-2 form-group">
+      <div>
+        <label>Instrument</label>
+        <select id="inst">
+          <option value="ES">ES ($50/pt)</option>
+          <option value="NQ">NQ ($20/pt)</option>
+          <option value="GC">GC ($100/pt)</option>
+          <option value="CL">CL ($1,000/pt)</option>
+        </select>
+      </div>
+      <div>
+        <label>Timeframe Pair</label>
+        <select id="tfPair">
+          <option value="15Min & 5Min">15Min & 5Min</option>
+          <option value="1Hr & 15Min">1Hr & 15Min</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2 form-group">
+      <div>
+        <label>Direction</label>
+        <div class="toggle-row">
+          <div class="toggle-btn active-long" id="btnLong">▲ Long</div>
+          <div class="toggle-btn" id="btnShort">▼ Short</div>
+        </div>
+      </div>
+      <div>
+        <label>Contracts</label>
+        <input type="number" id="contracts" value="1" min="1" step="1">
+      </div>
+    </div>
+
+    <div class="grid-3 form-group">
+      <div>
+        <label>Entry</label>
+        <input type="number" id="entry" step="any" placeholder="0.00">
+      </div>
+      <div>
+        <label>Stop</label>
+        <input type="number" id="stop" step="any" placeholder="0.00">
+      </div>
+      <div>
+        <label>Target</label>
+        <input type="number" id="target" step="any" placeholder="0.00">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Initial Trigger Idea</label>
+      <select id="initialTrigger">
+        <option value="1- 3 after high TF trigger">1- 3 after high TF trigger</option>
+        <option value="2- 3 before High TF trigger">2- 3 before High TF trigger</option>
+        <option value="3- 3 after High TF reversal">3- 3 after High TF reversal</option>
+        <option value="4- No pivot on small TF">4- No pivot on small TF</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>How You Executed</label>
+      <select id="execStyle">
+        <option value="A">A- Lower TF 3 occurred after a trigger on High TF. Entry when High TF continued.</option>
+        <option value="B">B- Lower TF 3 occurred then High TF trigger, Entry on High TF after LIQ sweep.</option>
+        <option value="C">C- Lower TF 3 occurred after Higher trigger but no continuation, Entry when High TF continues.</option>
+        <option value="D">D- High TF liquidity sweep. Entry on reversal.</option>
+      </select>
+    </div>
+
+    <div class="grid-2 form-group">
+      <div>
+        <label>Conviction</label>
+        <select id="conviction">
+          <option value="1 - Gambling">1 - Gambling</option>
+          <option value="2 - Good setup">2 - Good setup</option>
+          <option value="3 - A+ Setup">3 - A+ Setup</option>
+        </select>
+      </div>
+      <div>
+        <label>Followed Plan?</label>
+        <div class="toggle-row">
+          <div class="toggle-btn active-yes" id="btnYes">Yes</div>
+          <div class="toggle-btn" id="btnNo">No</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Note — What you saw, in your own words</label>
+      <textarea id="notes" rows="2"></textarea>
+    </div>
+
+    <div class="action-row">
+      <div class="calc-meta" id="planMeta">Risk: <b>--</b> • Planned R: <b>--</b></div>
+      <button class="btn-submit" id="btnAction">Open trade</button>
+    </div>
+  </div>
+
+  <div id="openSection"></div>
+
+  <!-- Performance Summary -->
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="metric-label">Closed</div>
+      <div class="metric-val" id="metricClosed">0</div>
+      <div class="metric-sub" id="metricRecord">0W / 0L</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Open</div>
+      <div class="metric-val" id="metricOpen">0</div>
+      <div class="metric-sub">still running</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Win Rate</div>
+      <div class="metric-val" id="metricWinRate">0%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Total Realized P&L</div>
+      <div class="metric-val" id="metricPnl">$0.00</div>
+    </div>
+  </div>
+
+  <!-- Average R by... Filter Analytics Box -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Average R by...</div>
+    </div>
+    <div class="filter-scroll" id="edgeFilterBar">
+      <div class="pill-filter active" data-filter="tfPair">Timeframe pair</div>
+      <div class="pill-filter" data-filter="inst">Bias read</div>
+      <div class="pill-filter" data-filter="initialTrigger">Trigger</div>
+      <div class="pill-filter" data-filter="execStyle">Execution</div>
+      <div class="pill-filter" data-filter="session">Session</div>
+      <div class="pill-filter" data-filter="weekday">Weekday</div>
+      <div class="pill-filter" data-filter="conviction">Exec grade</div>
+      <div class="pill-filter" data-filter="plan">Plan followed</div>
+    </div>
+    <div id="edgeContainer">
+      <div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20px 10px;">
+        <b style="color: #fff; font-size: 0.88rem; display:block; margin-bottom: 4px;">Nothing to measure yet</b>
+        Close a few trades and this becomes a ranked read of which timeframe pairs, bias reads and triggers actually pay.
+      </div>
+    </div>
+  </div>
+
+  <!-- Recorded Table -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Recorded trades</div>
+      <div class="panel-sub" id="recCount">0 RECORDED</div>
+    </div>
+    <div id="tradesTable">
+      <div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 14px;">No closed trades yet.</div>
+    </div>
+  </div>
+
+  <!-- Modal Inspection (Read-Only) -->
+  <div class="modal-overlay" id="sheetModal">
+    <div class="modal-box" id="sheetInner">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-weight:700;">Trade Details (Locked)</span>
+        <button style="background:none; border:none; color:var(--muted); font-size:1.4rem; cursor:pointer;" id="btnCloseModal">&times;</button>
+      </div>
+      <div id="sheetContent"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const MULTIPLIERS = { ES: 50, NQ: 20, GC: 100, CL: 1000 };
+
+      let state = {
+        dir: 'Long',
+        plan: true,
+        currentEdgeFilter: 'tfPair',
+        open: JSON.parse(localStorage.getItem('rouge_fund_open_vDateTime') || '[]'),
+        closed: JSON.parse(localStorage.getItem('rouge_fund_closed_vDateTime') || '[]')
+      };
+
+      const btnLong = document.getElementById('btnLong');
+      const btnShort = document.getElementById('btnShort');
+      const btnYes = document.getElementById('btnYes');
+      const btnNo = document.getElementById('btnNo');
+      const execSelect = document.getElementById('execStyle');
+      const tfSelect = document.getElementById('tfPair');
+      const noteInput = document.getElementById('notes');
+      const btnAction = document.getElementById('btnAction');
+      const entryInput = document.getElementById('entry');
+      const stopInput = document.getElementById('stop');
+      const targetInput = document.getElementById('target');
+      const instSelect = document.getElementById('inst');
+      const contractsInput = document.getElementById('contracts');
+
+      function persist() {
+        localStorage.setItem('rouge_fund_open_vDateTime', JSON.stringify(state.open));
+        localStorage.setItem('rouge_fund_closed_vDateTime', JSON.stringify(state.closed));
+        render();
+      }
+
+      function updateClock() {
+        const now = new Date();
+        const hour = now.getHours();
+        let session = 'OVERNIGHT';
+        if (hour >= 8 && hour < 12) session = 'MORNING';
+        else if (hour >= 12 && hour < 16) session = 'MIDDAY';
+        else if (hour >= 16 && hour < 20) session = 'LATE';
+
+        const day = now.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('hdrTime').innerText = `${session} • ${day} ${timeStr}`;
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      function getSessionName(dateStr) {
+        const d = new Date(dateStr);
+        const hour = d.getHours();
+        if (hour >= 8 && hour < 12) return 'Morning (NY)';
+        if (hour >= 12 && hour < 16) return 'Midday (NY)';
+        if (hour >= 16 && hour < 20) return 'Late Session';
+        return 'Overnight/Asia';
+      }
+
+      function getWeekdayName(dateStr) {
+        return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long' });
+      }
+
+      function syncNoteTemplate() {
+        if (!state.plan) return;
+        const tf = tfSelect.value;
+        const exec = execSelect.value;
+        const lowTf = tf.includes('15Min') && tf.includes('5Min') ? '5m' : '15m';
+        const highTf = tf.includes('15Min') && tf.includes('5Min') ? '15m' : '1h';
+
+        let text = "";
+        if (exec === "A") {
+          text = `Entry when ${lowTf} 3 occurred and continued after a trigger on ${highTf}`;
+        } else if (exec === "B") {
+          text = `${lowTf} 3 occurred before ${highTf} trigger, Entry on ${highTf} after LIQ sweep`;
+        } else if (exec === "C") {
+          text = `${lowTf} 3 occurred after ${highTf} trigger but no continuation, Entry when ${highTf} continues.`;
+        } else if (exec === "D") {
+          text = `${highTf} liquidity sweep. Entry on reversal.`;
+        }
+        noteInput.value = text;
+      }
+
+      function calcStats() {
+        const entry = parseFloat(entryInput.value);
+        const stop = parseFloat(stopInput.value);
+        const target = parseFloat(targetInput.value);
+        const inst = instSelect.value;
+        const contracts = parseFloat(contractsInput.value) || 1;
+        const meta = document.getElementById('planMeta');
+
+        if (!entry || !stop) {
+          meta.innerHTML = 'Risk: <b>--</b> • Planned R: <b>--</b>';
+          return;
+        }
+
+        const riskPts = Math.abs(entry - stop);
+        const riskDollar = riskPts * MULTIPLIERS[inst] * contracts;
+        let plannedR = '--';
+
+        if (target) {
+          plannedR = (Math.abs(target - entry) / riskPts).toFixed(2) + 'R';
+        }
+        meta.innerHTML = `Risk: <b>${riskPts.toFixed(2)} pts ($${riskDollar.toLocaleString()})</b> • Planned R: <b>+${plannedR}</b>`;
+      }
+
+      btnLong.onclick = function() {
+        state.dir = 'Long';
+        btnLong.className = 'toggle-btn active-long';
+        btnShort.className = 'toggle-btn';
+        calcStats();
+      };
+
+      btnShort.onclick = function() {
+        state.dir = 'Short';
+        btnShort.className = 'toggle-btn active-short';
+        btnLong.className = 'toggle-btn';
+        calcStats();
+      };
+
+      btnYes.onclick = function() {
+        state.plan = true;
+        btnYes.className = 'toggle-btn active-yes';
+        btnNo.className = 'toggle-btn';
+        btnAction.innerText = "Open trade";
+        btnAction.className = "btn-submit";
+        syncNoteTemplate();
+      };
+
+      btnNo.onclick = function() {
+        state.plan = false;
+        btnNo.className = 'toggle-btn active-no';
+        btnYes.className = 'toggle-btn';
+        btnAction.innerText = "Log the miss";
+        btnAction.className = "btn-submit btn-miss";
+        noteInput.value = "Hesitated — no entry taken";
+      };
+
+      execSelect.onchange = syncNoteTemplate;
+      tfSelect.onchange = syncNoteTemplate;
+
+      [entryInput, stopInput, targetInput, instSelect, contractsInput].forEach(el => {
+        el.oninput = calcStats;
+        el.onchange = calcStats;
+      });
+
+      document.querySelectorAll('#edgeFilterBar .pill-filter').forEach(btn => {
+        btn.onclick = function() {
+          document.querySelectorAll('#edgeFilterBar .pill-filter').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          state.currentEdgeFilter = this.getAttribute('data-filter');
+          renderEdgeAnalytics();
+        };
+      });
+
+      btnAction.onclick = function() {
+        const now = new Date();
+        const dateIso = now.toISOString();
+        const timeFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        if (!state.plan) {
+          state.closed.unshift({
+            id: Date.now(),
+            date: dateIso,
+            entryTime: timeFormatted,
+            closeTime: timeFormatted,
+            inst: instSelect.value,
+            tfPair: tfSelect.value,
+            dir: state.dir,
+            contracts: 0,
+            entry: 0,
+            exitPrice: 0,
+            dollarPnl: 0,
+            rMult: 0,
+            initialTrigger: document.getElementById('initialTrigger').value,
+            execStyle: execSelect.value,
+            conviction: document.getElementById('conviction').value,
+            plan: false,
+            notes: noteInput.value,
+            missed: true
+          });
+          persist();
+          btnYes.click();
+          return;
+        }
+
+        const entry = parseFloat(entryInput.value);
+        const stop = parseFloat(stopInput.value);
+        const target = parseFloat(targetInput.value);
+
+        if (isNaN(entry) || isNaN(stop)) {
+          alert('Please enter Entry and Stop prices.');
+          return;
+        }
+
+        state.open.push({
+          id: Date.now(),
+          date: dateIso,
+          entryTime: timeFormatted,
+          inst: instSelect.value,
+          tfPair: tfSelect.value,
+          dir: state.dir,
+          contracts: parseFloat(contractsInput.value) || 1,
+          entry,
+          stop,
+          target: isNaN(target) ? null : target,
+          initialTrigger: document.getElementById('initialTrigger').value,
+          execStyle: execSelect.value,
+          conviction: document.getElementById('conviction').value,
+          plan: true,
+          notes: noteInput.value
+        });
+
+        persist();
+        entryInput.value = '';
+        stopInput.value = '';
+        targetInput.value = '';
+        calcStats();
+      };
+
+      window.resolvePos = function(id, type) {
+        const idx = state.open.findIndex(t => t.id === id);
+        if (idx === -1) return;
+        const t = state.open[idx];
+
+        let exit = t.entry;
+        if (type === 'target' && t.target) exit = t.target;
+        else if (type === 'stop') exit = t.stop;
+        else if (type === 'custom') {
+          const p = prompt('Enter fill / exit price:');
+          if (p === null || isNaN(parseFloat(p))) return;
+          exit = parseFloat(p);
+        }
+
+        const diff = t.dir === 'Long' ? (exit - t.entry) : (t.entry - exit);
+        const dollarPnl = diff * MULTIPLIERS[t.inst] * t.contracts;
+        const risk = Math.abs(t.entry - t.stop);
+        const rMult = risk > 0 ? (diff / risk) : 0;
+
+        const now = new Date();
+        const closeTimeFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        state.closed.unshift({
+          ...t,
+          exitPrice: exit,
+          dollarPnl,
+          rMult,
+          closeDate: now.toISOString(),
+          closeTime: closeTimeFormatted
+        });
+
+        state.open.splice(idx, 1);
+        persist();
+      };
+
+      window.inspectTrade = function(idx) {
+        const t = state.closed[idx];
+        const mult = MULTIPLIERS[t.inst];
+        const pnlColor = t.dollarPnl >= 0 ? 'var(--green)' : 'var(--red)';
+        const dateStr = new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        document.getElementById('sheetContent').innerHTML = `
+          <div style="text-align:center; padding: 12px 0;">
+            <div style="color:${pnlColor}; font-size:1.7rem; font-weight:800;">
+              ${t.dollarPnl >= 0 ? '+' : ''}$${t.dollarPnl.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+            </div>
+            <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">
+              ${t.rMult >= 0 ? '+' : ''}${t.rMult.toFixed(2)}R • ${t.inst} ($${mult}/pt)
+            </div>
+          </div>
+          <div class="sheet-line"><span>Date Logged</span><span>${dateStr}</span></div>
+          <div class="sheet-line"><span>Entry & Exit Time</span><span>${t.entryTime || '--'} &rarr; ${t.closeTime || '--'}</span></div>
+          <div class="sheet-line"><span>Pair / TF</span><span>${t.inst} • ${t.tfPair}</span></div>
+          <div class="sheet-line"><span>Direction & Size</span><span>${t.dir} (${t.contracts} ct)</span></div>
+          <div class="sheet-line"><span>Entry & Exit Price</span><span>${t.entry ? t.entry.toFixed(2) : '--'} &rarr; ${t.exitPrice ? t.exitPrice.toFixed(2) : '--'}</span></div>
+          <div class="sheet-line"><span>Stop / Target</span><span>${t.stop ? t.stop.toFixed(2) : '--'} / ${t.target ? t.target.toFixed(2) : '--'}</span></div>
+          <div class="sheet-line"><span>Initial Trigger</span><span>${t.initialTrigger}</span></div>
+          <div class="sheet-line"><span>How Executed</span><span>${t.execStyle}</span></div>
+          <div class="sheet-line"><span>Conviction</span><span>${t.conviction}</span></div>
+          <div class="sheet-line"><span>Followed Plan?</span><span>${t.plan ? 'Yes' : 'No (Hesitated)'}</span></div>
+          <div class="sheet-line"><span>Note</span><span>${t.notes || '--'}</span></div>
+          <div style="margin-top:14px; text-align:center; color:var(--muted); font-size:0.72rem; letter-spacing:0.5px;">
+            🔒 PERMANENT AUDIT LOG — LOCKED
+          </div>
+        `;
+
+        document.getElementById('sheetModal').style.display = 'flex';
+      };
+
+      document.getElementById('btnCloseModal').onclick = function() {
+        document.getElementById('sheetModal').style.display = 'none';
+      };
+
+      function renderEdgeAnalytics() {
+        const cont = document.getElementById('edgeContainer');
+        const trades = state.closed.filter(t => !t.missed);
+
+        if (trades.length === 0) {
+          cont.innerHTML = `
+            <div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20px 10px;">
+              <b style="color: #fff; font-size: 0.88rem; display:block; margin-bottom: 4px;">Nothing to measure yet</b>
+              Close a few trades and this becomes a ranked read of which timeframe pairs, bias reads and triggers actually pay.
+            </div>`;
+          return;
+        }
+
+        const groups = {};
+        trades.forEach(t => {
+          let key = t[state.currentEdgeFilter];
+          if (state.currentEdgeFilter === 'session') key = getSessionName(t.date);
+          if (state.currentEdgeFilter === 'weekday') key = getWeekdayName(t.date);
+          if (state.currentEdgeFilter === 'plan') key = t.plan ? 'Plan Followed' : 'Off-Plan';
+
+          if (!groups[key]) groups[key] = { rSum: 0, count: 0 };
+          groups[key].rSum += t.rMult;
+          groups[key].count += 1;
+        });
+
+        const sorted = Object.keys(groups).map(k => {
+          return {
+            name: k,
+            avgR: groups[k].rSum / groups[k].count,
+            count: groups[k].count
+          };
+        }).sort((a, b) => b.avgR - a.avgR);
+
+        cont.innerHTML = `
+          <div style="font-size:0.68rem; color:var(--muted); margin-bottom:8px;">
+            Bars run from a zero centre line: right & aqua is positive expectancy, left & red is negative.
+          </div>
+        `;
+
+        sorted.forEach(item => {
+          const isPos = item.avgR >= 0;
+          const barWidth = Math.min(Math.abs(item.avgR) * 35, 100);
+          const row = document.createElement('div');
+          row.className = 'edge-row';
+          row.innerHTML = `
+            <div class="edge-name">${item.name}</div>
+            <div class="edge-bar-wrap">
+              <div class="edge-bar ${isPos ? 'pos' : 'neg'}" style="width: ${barWidth}%;"></div>
+            </div>
+            <div class="edge-val" style="color: ${isPos ? 'var(--cyan)' : 'var(--red)'};">
+              ${isPos ? '+' : ''}${item.avgR.toFixed(2)}R <span style="font-size:0.65rem; color:var(--muted);">n=${item.count}</span>
+            </div>
+          `;
+          cont.appendChild(row);
+        });
+      }
+
+      function render() {
+        let totalPnl = 0;
+        let wins = 0;
+        state.closed.forEach(t => {
+          totalPnl += t.dollarPnl;
+          if (t.dollarPnl > 0) wins++;
+        });
+
+        document.getElementById('metricClosed').innerText = state.closed.length;
+        document.getElementById('metricOpen').innerText = state.open.length;
+        document.getElementById('metricRecord').innerText = `${wins}W / ${state.closed.length - wins}L`;
+        document.getElementById('metricWinRate').innerText = state.closed.length > 0 ? `${Math.round((wins / state.closed.length) * 100)}%` : '0%';
+
+        const pnlBox = document.getElementById('metricPnl');
+        pnlBox.innerText = (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        pnlBox.style.color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)';
+
+        // Open positions
+        const openSec = document.getElementById('openSection');
+        openSec.innerHTML = '';
+        if (state.open.length > 0) {
+          const head = document.createElement('div');
+          head.innerHTML = `<label style="margin-bottom:6px;">Open Positions (${state.open.length})</label>`;
+          openSec.appendChild(head);
+        }
+
+        state.open.forEach(t => {
+          const card = document.createElement('div');
+          card.className = 'open-card';
+          card.innerHTML = `
+            <div class="open-head">
+              <div>
+                <span class="dir-badge ${t.dir === 'Long' ? 'dir-long' : 'dir-short'}">▲ ${t.dir}</span>
+                <b style="margin-left:4px; font-size:0.85rem;">${t.inst}</b> • <span style="font-size:0.75rem; color:var(--muted);">${t.tfPair}</span>
+              </div>
+              <div style="font-size:0.72rem; color:var(--cyan); font-weight:700;">Running • ${t.entryTime}</div>
+            </div>
+            <div class="grid-3" style="font-size:0.75rem; color:var(--muted); margin-bottom:8px;">
+              <div>Entry: <b style="color:#fff;">${t.entry}</b></div>
+              <div>Stop: <b style="color:#fff;">${t.stop}</b></div>
+              <div>Target: <b style="color:#fff;">${t.target || '--'}</b></div>
+            </div>
+            <div class="open-btns">
+              <button class="btn-pos btn-pos-stop" onclick="resolvePos(${t.id}, 'stop')">Stopped</button>
+              <button class="btn-pos btn-pos-target" onclick="resolvePos(${t.id}, 'target')">Target Hit</button>
+              <button class="btn-pos btn-pos-exit" onclick="resolvePos(${t.id}, 'custom')">Exit @</button>
+              <button class="btn-pos btn-pos-close" onclick="resolvePos(${t.id}, 'close')">Close</button>
+            </div>
+          `;
+          openSec.appendChild(card);
+        });
+
+        renderEdgeAnalytics();
+
+        // Recorded table
+        const table = document.getElementById('tradesTable');
+        document.getElementById('recCount').innerText = `${state.closed.length} RECORDED`;
+        table.innerHTML = '';
+
+        if (state.closed.length === 0) {
+          table.innerHTML = '<div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 14px;">No closed trades yet.</div>';
+          return;
+        }
+
+        state.closed.forEach((t, i) => {
+          const row = document.createElement('div');
+          row.className = 'trade-row';
+          row.onclick = () => inspectTrade(i);
+          const dateStr = new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          const pnlStr = (t.dollarPnl >= 0 ? '+$' : '-$') + Math.abs(t.dollarPnl).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+          row.innerHTML = `
+            <div>
+              <div style="font-weight:700; color:#fff;">${t.inst} • <span style="font-size:0.72rem; color:var(--muted);">${t.tfPair}</span></div>
+              <div style="font-size:0.68rem; color:var(--muted); margin-top:2px;">
+                ${dateStr} <span style="color:#fff; font-weight:600;">${t.entryTime || ''}</span> • 
+                <span class="dir-badge ${t.dir === 'Long' ? 'dir-long' : 'dir-short'}">${t.dir}</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:800; font-size:0.85rem; color:${t.dollarPnl >= 0 ? 'var(--green)' : 'var(--red)'};">${pnlStr}</div>
+              <div style="font-size:0.68rem; color:var(--muted);">${t.rMult >= 0 ? '+' : ''}${t.rMult.toFixed(2)}R</div>
+            </div>
+          `;
+          table.appendChild(row);
+        });
+      }
+
+      document.getElementById('btnExportJson').onclick = function() {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `rouge_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+      };
+
+      document.getElementById('btnImportJson').onclick = function() {
+        document.getElementById('fileIn').click();
+      };
+
+      document.getElementById('fileIn').onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = function(evt) {
+          try {
+            const l = JSON.parse(evt.target.result);
+            if (l.open && l.closed) {
+              state.open = l.open;
+              state.closed = l.closed;
+              persist();
+              alert('Backup restored!');
+            }
+          } catch(err) { alert('Invalid file'); }
+        };
+        r.readAsText(file);
+      };
+
+      document.getElementById('btnExportCsv').onclick = function() {
+        if (state.closed.length === 0) return alert('No trades to export.');
+        let csv = 'Date,Time In,Time Out,Instrument,Pair,Direction,Contracts,Entry,Exit,P&L ($),R Mult,Trigger,Execution,Conviction\n';
+        state.closed.forEach(t => {
+          csv += `"${t.date}","${t.entryTime || ''}","${t.closeTime || ''}","${t.inst}","${t.tfPair}","${t.dir}",${t.contracts},${t.entry},${t.exitPrice},${t.dollarPnl},${t.rMult},"${t.initialTrigger}","${t.execStyle}","${t.conviction}"\n`;
+        });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = `rouge_trades_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+      };
+
+      syncNoteTemplate();
+      render();
+    })();
+  </script>
+</body>
+</html>
